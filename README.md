@@ -110,6 +110,11 @@ Route::group([
 ```
 php artisan make:controller ApiController
 ```
+
+### Now open this ApiController and paste this below code
+
+app/Http/Controllers/ApiController.php
+```
 <?php
 
 namespace App\Http\Controllers;
