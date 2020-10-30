@@ -5,6 +5,14 @@ Laravel REST API with JWT(JSON Web Token) Authentication.
 ```
 composer require tymon/jwt-auth
 ```
+N.B. : If face any probem(Laravel 5.8) to install JWT token - 
+```
+"require": {
+        ...
+        "tymon/jwt-auth": "dev-developer"
+    },
+```
+than ' coposer update '
 
 ## Add service provider ( Laravel 5.4 or below )(config/app.php) 
 ```
@@ -28,7 +36,7 @@ php artisan jwt:secret
 ```
 ### In Environment (.env) file
 ```
-JWT_SECRET=foobar
+JWT_SECRET=v0fSb74o11TPfNgObVqNGDnXBwmydN232wIWZPP5xqzqVi7IyPQnSY7SsvR3Ez1fSjh
 ```
 ### User.php
 ```
@@ -72,7 +80,7 @@ class User extends Authenticatable implements JWTSubject
 ##### config/auth.php
 ```
 'defaults' => [
-    'guard' => 'api',
+    'guard' => 'api',   //web to api
     'passwords' => 'users',
 ],
 
@@ -80,7 +88,7 @@ class User extends Authenticatable implements JWTSubject
 
 'guards' => [
     'api' => [
-        'driver' => 'jwt',
+        'driver' => 'jwt',  //token to jwt(web.php for token and api.php for jwt)
         'provider' => 'users',
     ],
 ],
@@ -91,10 +99,9 @@ class User extends Authenticatable implements JWTSubject
 ```
 Route::group([
 
-    'middleware' => 'api',
     'prefix' => 'auth'
 
-], function ($router) {
+], function () {
 
     Route::post('register', 'ApiController@login');
     Route::post('login', 'ApiController@login');
@@ -159,7 +166,11 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ])
     }
         
     public function logout()
